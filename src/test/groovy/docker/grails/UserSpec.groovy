@@ -1,22 +1,27 @@
 package docker.grails
 
+import grails.plugins.rest.client.RestBuilder
+import grails.plugins.rest.client.RestResponse
 import grails.test.mixin.TestFor
+import spock.lang.Shared
 import spock.lang.Specification
 
-/**
- * See the API for {@link grails.test.mixin.domain.DomainClassUnitTestMixin} for usage instructions
- */
 @TestFor(User)
 class UserSpec extends Specification {
 
-    def setup() {
-    }
+    @Shared RestBuilder restBuilder = new RestBuilder()
 
-    def cleanup() {
-    }
+    public static final String USER_ENDPOINT = "http://localhost:8080/users"
+    public static final int OK_STATUS = 200
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
+    void "should return JSON version of User data"() {
+        when:
+        RestResponse response = restBuilder.get(USER_ENDPOINT)
+
+        then:
+        response.status == OK_STATUS
+
+        and:
+        response.json[0].name == "Alvaro"
     }
 }
